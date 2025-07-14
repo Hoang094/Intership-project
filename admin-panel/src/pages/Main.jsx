@@ -1,9 +1,5 @@
-import {
-  DashboardOutlined, FileProtectOutlined, FullscreenExitOutlined, FullscreenOutlined, HomeOutlined, LogoutOutlined, TeamOutlined, UserOutlined
-} from '@ant-design/icons';
-import {
-  Button, Layout, Menu, Tooltip
-} from 'antd';
+import { DashboardOutlined, FileProtectOutlined, FullscreenExitOutlined, FullscreenOutlined, HomeOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Layout, Menu, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Logo from '../assets/images/logo.svg';
@@ -18,12 +14,10 @@ import ApiService from '../utils/apiService';
 import { removeSessionAndLogoutUser } from '../utils/authentication';
 import notificationWithIcon from '../utils/notification';
 
-const {
-  Header, Content, Footer, Sider
-} = Layout;
+const { Header, Content, Footer, Sider } = Layout;
 
 function Main() {
-  window.document.title = 'Beach Resort — Main';
+  window.document.title = 'Hotel Room Booking System — Main';
   const { isFullscreen, toggleFullScreen } = useFullScreen();
   const [selectedKeys, setSelectedKeys] = useState('1');
   const navigate = useNavigate();
@@ -159,33 +153,33 @@ function Main() {
             {
               key: '1',
               icon: <DashboardOutlined />,
-              label: 'Dashboard'
+              label: 'Dashboard',
             },
             {
               key: '2',
               icon: <TeamOutlined />,
-              label: 'Users'
+              label: 'Users',
             },
             {
               key: '3',
               icon: <HomeOutlined />,
-              label: 'Hotel Rooms'
+              label: 'Hotel Rooms',
             },
             {
               key: '4',
               icon: <FileProtectOutlined />,
-              label: 'Booking Orders'
+              label: 'Booking Orders',
             },
             {
               key: '5',
               icon: <UserOutlined />,
-              label: 'My Profile'
+              label: 'My Profile',
             },
             {
               key: '6',
               icon: <LogoutOutlined />,
-              label: 'Logout'
-            }
+              label: 'Logout',
+            },
           ]}
         />
       </Sider>
@@ -193,39 +187,24 @@ function Main() {
       <Layout>
         <Header className='p-0 !bg-bg-white'>
           <Link to='/'>
-            <img
-              className='w-[280px] h-[65px] mx-auto'
-              alt='beach-resort-logo'
-              src={Logo}
-            />
+            <img className='w-[280px] h-[65px] mx-auto' alt='beach-resort-logo' src={Logo} />
           </Link>
 
           {/* full screen toggle button */}
           <Tooltip title='Click to toggle Full Screen' placement='left'>
-            <Button
-              className='absolute right-5 top-5'
-              icon={isFullscreen ?
-                (<FullscreenExitOutlined className='pb-12' />) :
-                (<FullscreenOutlined className='pb-12' />)}
-              onClick={toggleFullScreen}
-              shape='default'
-              type='default'
-              size='middle'
-            />
+            <Button className='absolute right-5 top-5' icon={isFullscreen ? <FullscreenExitOutlined className='pb-12' /> : <FullscreenOutlined className='pb-12' />} onClick={toggleFullScreen} shape='default' type='default' size='middle' />
           </Tooltip>
         </Header>
 
         <Content className='bg-bg-white overflow-y-scroll m-2 p-2'>
-          {selectedKeys === '1' && (<Dashboard />)}
-          {selectedKeys === '2' && (<Users />)}
-          {selectedKeys === '3' && (<Rooms />)}
-          {selectedKeys === '4' && (<Orders />)}
-          {selectedKeys === '5' && (<MyProfile />)}
+          {selectedKeys === '1' && <Dashboard />}
+          {selectedKeys === '2' && <Users />}
+          {selectedKeys === '3' && <Rooms />}
+          {selectedKeys === '4' && <Orders />}
+          {selectedKeys === '5' && <MyProfile />}
         </Content>
 
-        <Footer className='text-center font-text-font font-medium '>
-          Hệ thống đặt phòng khách sạn
-        </Footer>
+        <Footer className='text-center font-text-font font-medium '>Hệ thống đặt phòng khách sạn</Footer>
       </Layout>
     </Layout>
   );
