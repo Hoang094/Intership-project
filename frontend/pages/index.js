@@ -13,12 +13,9 @@ const { publicRuntimeConfig } = getConfig();
 
 function Home(props) {
   return (
-    <MainLayout title='Beach Resort ― Home'>
+    <MainLayout title='Hotel Booking ― Home'>
       <Hero>
-        <Banner
-          title='luxurious rooms'
-          subtitle='deluxe rooms giá chỉ từ 1.000.000 đ'
-        >
+        <Banner title='luxurious rooms' subtitle='deluxe rooms giá chỉ từ 1.000.000 đ'>
           <Link href='/rooms' className='btn-primary'>
             our rooms
           </Link>
@@ -26,22 +23,7 @@ function Home(props) {
       </Hero>
       <Services />
       <Skeleton loading={!props?.featuredRooms && !props?.error} paragraph={{ rows: 5 }} active>
-        {props?.featuredRooms?.data?.rows?.length === 0 ? (
-          <Empty
-            className='mt-10'
-            description={(<span>Không có dữ liệu</span>)}
-          />
-        ) : props?.error ? (
-          <Result
-            title='Failed to fetch'
-            subTitle={props?.error?.message || 'error'}
-            status='error'
-          />
-        ) : (
-          <FeaturedRooms
-            featuredRoom={props?.featuredRooms?.data?.rows}
-          />
-        )}
+        {props?.featuredRooms?.data?.rows?.length === 0 ? <Empty className='mt-10' description={<span>Không có dữ liệu</span>} /> : props?.error ? <Result title='Failed to fetch' subTitle={props?.error?.message || 'error'} status='error' /> : <FeaturedRooms featuredRoom={props?.featuredRooms?.data?.rows} />}
       </Skeleton>
     </MainLayout>
   );
@@ -49,24 +31,24 @@ function Home(props) {
 
 export async function getServerSideProps() {
   try {
-    // Lấy danh sách các phòng nổi bật
     const response = await axios.get(`${publicRuntimeConfig.API_BASE_URL}/api/v1/featured-rooms-list`);
-    const featuredRooms = response?.data?.result;
+
+    // Check what the API actually returns
+    const featuredRooms = response?.data?.result || null;
 
     return {
       props: {
         featuredRooms,
-        error: null
-      }
+        error: null,
+      },
     };
   } catch (err) {
     return {
       props: {
         featuredRooms: null,
-        error: err?.data
-      }
+        error: err?.response?.data || { message: err.message },
+      },
     };
   }
 }
-
 export default Home;
