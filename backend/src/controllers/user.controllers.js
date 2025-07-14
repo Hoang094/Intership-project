@@ -1,11 +1,9 @@
-
-
-const fs = require('fs');
-const appRoot = require('app-root-path');
-const { errorResponse, successResponse } = require('../configs/app.response');
-const User = require('../models/user.model');
-const logger = require('../middleware/winston.logger');
-const MyQueryHelper = require('../configs/api.feature');
+const fs = require("fs");
+const appRoot = require("app-root-path");
+const { errorResponse, successResponse } = require("../configs/app.response");
+const User = require("../models/user");
+const logger = require("../middleware/winston.logger");
+const MyQueryHelper = require("../configs/api.feature");
 
 // TODO: Controller for get user info
 exports.getUser = async (req, res) => {
@@ -13,18 +11,13 @@ exports.getUser = async (req, res) => {
     const { user } = req;
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User information get successful',
-      {
+    res.status(200).json(
+      successResponse(0, "SUCCESS", "User information get successful", {
         userName: user.userName,
         fullName: user.fullName,
         email: user.email,
@@ -37,15 +30,11 @@ exports.getUser = async (req, res) => {
         verified: user.verified,
         status: user.status,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }
-    ));
+        updatedAt: user.updatedAt,
+      })
+    );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -56,18 +45,13 @@ exports.getUserById = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User information get successful',
-      {
+    res.status(200).json(
+      successResponse(0, "SUCCESS", "User information get successful", {
         id: user._id,
         userName: user.userName,
         fullName: user.fullName,
@@ -81,15 +65,11 @@ exports.getUserById = async (req, res) => {
         verified: user.verified,
         status: user.status,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }
-    ));
+        updatedAt: user.updatedAt,
+      })
+    );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -97,16 +77,12 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { user } = req;
-    const {
-      fullName, phone, gender, dob, address
-    } = req.body;
+    const { fullName, phone, gender, dob, address } = req.body;
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
     if (fullName && phone && gender && dob && address) {
@@ -114,16 +90,17 @@ exports.updateUser = async (req, res) => {
       const updatedUser = await User.findByIdAndUpdate(
         user._id,
         {
-          fullName, phone, gender, dob, address
+          fullName,
+          phone,
+          gender,
+          dob,
+          address,
         },
         { runValidators: true, new: true }
       );
 
-      res.status(200).json(successResponse(
-        0,
-        'SUCCESS',
-        'User info updated successful',
-        {
+      res.status(200).json(
+        successResponse(0, "SUCCESS", "User info updated successful", {
           userName: updatedUser.userName,
           fullName: updatedUser.fullName,
           email: updatedUser.email,
@@ -136,49 +113,39 @@ exports.updateUser = async (req, res) => {
           verified: updatedUser.verified,
           status: updatedUser.status,
           createdAt: updatedUser.createdAt,
-          updatedAt: updatedUser.updatedAt
-        }
-      ));
+          updatedAt: updatedUser.updatedAt,
+        })
+      );
     } else {
       // check if fullName is empty
       if (!fullName) {
-        return res.status(400).json(errorResponse(
-          1,
-          'FAILED',
-          'User `fullName` field is required'
-        ));
+        return res
+          .status(400)
+          .json(
+            errorResponse(1, "FAILED", "User `fullName` field is required")
+          );
       }
       // check if phone is empty
       if (!phone) {
-        return res.status(400).json(errorResponse(
-          1,
-          'FAILED',
-          'User `phone` field is required'
-        ));
+        return res
+          .status(400)
+          .json(errorResponse(1, "FAILED", "User `phone` field is required"));
       }
       // check if gender is empty
       if (!gender) {
-        return res.status(400).json(errorResponse(
-          1,
-          'FAILED',
-          'User `gender` field is required'
-        ));
+        return res
+          .status(400)
+          .json(errorResponse(1, "FAILED", "User `gender` field is required"));
       }
       // check if address is empty
       if (!address) {
-        return res.status(400).json(errorResponse(
-          1,
-          'FAILED',
-          'User `address` field is required'
-        ));
+        return res
+          .status(400)
+          .json(errorResponse(1, "FAILED", "User `address` field is required"));
       }
     }
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -188,18 +155,18 @@ exports.avatarUpdate = async (req, res) => {
     const { user, file } = req;
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
     if (file) {
       // if find to delete user old avatar
-      if (user?.avatar?.includes('/uploads/users')) {
+      if (user?.avatar?.includes("/uploads/users")) {
         fs.unlink(`${appRoot}/public/${user.avatar}`, (err) => {
-          if (err) { logger.error(err); }
+          if (err) {
+            logger.error(err);
+          }
         });
       }
 
@@ -210,11 +177,8 @@ exports.avatarUpdate = async (req, res) => {
         { runValidators: true, new: true }
       );
 
-      res.status(200).json(successResponse(
-        0,
-        'SUCCESS',
-        'User avatar updated successful',
-        {
+      res.status(200).json(
+        successResponse(0, "SUCCESS", "User avatar updated successful", {
           userName: updatedUser.userName,
           fullName: updatedUser.fullName,
           email: updatedUser.email,
@@ -227,29 +191,28 @@ exports.avatarUpdate = async (req, res) => {
           verified: updatedUser.verified,
           status: updatedUser.status,
           createdAt: updatedUser.createdAt,
-          updatedAt: updatedUser.updatedAt
-        }
-      ));
+          updatedAt: updatedUser.updatedAt,
+        })
+      );
     } else {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'User `avatar` field is required'
-      ));
+      return res
+        .status(400)
+        .json(errorResponse(1, "FAILED", "User `avatar` field is required"));
     }
   } catch (error) {
     // if any error delete uploaded avatar image
     if (req?.file?.filename) {
-      fs.unlink(`${appRoot}/public/uploads/users/${req.file.filename}`, (err) => {
-        if (err) { logger.error(err); }
-      });
+      fs.unlink(
+        `${appRoot}/public/uploads/users/${req.file.filename}`,
+        (err) => {
+          if (err) {
+            logger.error(err);
+          }
+        }
+      );
     }
 
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -259,11 +222,9 @@ exports.deleteUser = async (req, res) => {
     const { user } = req;
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
     // delete user form database
@@ -271,7 +232,7 @@ exports.deleteUser = async (req, res) => {
 
     // user avatar image delete if available
     if (user?.avatar) {
-      const userAvatar = user.avatar.includes('/uploads/users');
+      const userAvatar = user.avatar.includes("/uploads/users");
 
       if (userAvatar) {
         fs.unlink(`${appRoot}/public${user.avatar}`, (err) => {
@@ -282,17 +243,13 @@ exports.deleteUser = async (req, res) => {
       }
     }
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User delete form database successful'
-    ));
+    res
+      .status(200)
+      .json(
+        successResponse(0, "SUCCESS", "User delete form database successful")
+      );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -303,19 +260,15 @@ exports.deleteUserById = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
     if (req?.user?.id?.toString() === req.params.id) {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Sorry! You can\'t delete yourself'
-      ));
+      return res
+        .status(400)
+        .json(errorResponse(1, "FAILED", "Sorry! You can't delete yourself"));
     }
 
     // delete user form database
@@ -323,7 +276,7 @@ exports.deleteUserById = async (req, res) => {
 
     // user avatar image delete if available
     if (user?.avatar) {
-      const userAvatar = user.avatar.includes('/uploads/users');
+      const userAvatar = user.avatar.includes("/uploads/users");
 
       if (userAvatar) {
         fs.unlink(`${appRoot}/public${user.avatar}`, (err) => {
@@ -334,17 +287,13 @@ exports.deleteUserById = async (req, res) => {
       }
     }
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User delete form database successful'
-    ));
+    res
+      .status(200)
+      .json(
+        successResponse(0, "SUCCESS", "User delete form database successful")
+      );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -354,26 +303,27 @@ exports.getUsersList = async (req, res) => {
     const { user } = req;
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
     // finding all users data from database
     const users = await User.find();
 
     if (!users) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'Sorry! Any user does not found'
-      ));
+      return res
+        .status(404)
+        .json(
+          errorResponse(4, "UNKNOWN ACCESS", "Sorry! Any user does not found")
+        );
     }
 
     // filtering users based on different types query
-    const userQuery = new MyQueryHelper(User.find(), req.query).search('fullName').sort().paginate();
+    const userQuery = new MyQueryHelper(User.find(), req.query)
+      .search("fullName")
+      .sort()
+      .paginate();
     const findUsers = await userQuery.query;
 
     const mappedUsers = findUsers?.map((data) => ({
@@ -390,27 +340,22 @@ exports.getUsersList = async (req, res) => {
       verified: data.verified,
       status: data.status,
       createdAt: data.createdAt,
-      updatedAt: data.updatedAt
+      updatedAt: data.updatedAt,
     }));
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'Users list data found successful',
-      {
+    res.status(200).json(
+      successResponse(0, "SUCCESS", "Users list data found successful", {
         rows: mappedUsers,
         total_rows: users.length,
         response_rows: findUsers.length,
-        total_page: req?.query?.keyword ? Math.ceil(findUsers.length / req.query.limit) : Math.ceil(users.length / req.query.limit),
-        current_page: req?.query?.page ? parseInt(req.query.page, 10) : 1
-      }
-    ));
+        total_page: req?.query?.keyword
+          ? Math.ceil(findUsers.length / req.query.limit)
+          : Math.ceil(users.length / req.query.limit),
+        current_page: req?.query?.page ? parseInt(req.query.page, 10) : 1,
+      })
+    );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -421,41 +366,34 @@ exports.blockedUser = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (req?.user?._id?.toString() === req.params.id) {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Sorry! You can´t possible self blocked'
-      ));
+      return res
+        .status(400)
+        .json(
+          errorResponse(1, "FAILED", "Sorry! You can´t possible self blocked")
+        );
     }
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
-    if (user.status === 'blocked') {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Ops! User already blocked'
-      ));
+    if (user.status === "blocked") {
+      return res
+        .status(400)
+        .json(errorResponse(1, "FAILED", "Ops! User already blocked"));
     }
 
     // update user status & updateAt time
     const blockedUser = await User.findByIdAndUpdate(
       user._id,
-      { status: 'blocked', updatedAt: Date.now() },
+      { status: "blocked", updatedAt: Date.now() },
       { new: true }
     );
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User blocked successful',
-      {
+    res.status(200).json(
+      successResponse(0, "SUCCESS", "User blocked successful", {
         userName: blockedUser.userName,
         fullName: blockedUser.fullName,
         email: blockedUser.email,
@@ -468,15 +406,11 @@ exports.blockedUser = async (req, res) => {
         verified: blockedUser.verified,
         status: blockedUser.status,
         createdAt: blockedUser.createdAt,
-        updatedAt: blockedUser.updatedAt
-      }
-    ));
+        updatedAt: blockedUser.updatedAt,
+      })
+    );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };
 
@@ -487,41 +421,34 @@ exports.unblockedUser = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     if (req?.user?._id?.toString() === req.params.id) {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Ops! You can´t possible self unblocked'
-      ));
+      return res
+        .status(400)
+        .json(
+          errorResponse(1, "FAILED", "Ops! You can´t possible self unblocked")
+        );
     }
 
     if (!user) {
-      return res.status(404).json(errorResponse(
-        4,
-        'UNKNOWN ACCESS',
-        'User does not exist'
-      ));
+      return res
+        .status(404)
+        .json(errorResponse(4, "UNKNOWN ACCESS", "User does not exist"));
     }
 
-    if (user.status !== 'blocked') {
-      return res.status(400).json(errorResponse(
-        1,
-        'FAILED',
-        'Sorry! User already unblocked'
-      ));
+    if (user.status !== "blocked") {
+      return res
+        .status(400)
+        .json(errorResponse(1, "FAILED", "Sorry! User already unblocked"));
     }
 
     // update user status & updateAt time
     const unblockedUser = await User.findByIdAndUpdate(
       user._id,
-      { status: 'logout', updatedAt: Date.now() },
+      { status: "logout", updatedAt: Date.now() },
       { new: true }
     );
 
-    res.status(200).json(successResponse(
-      0,
-      'SUCCESS',
-      'User unblocked successful',
-      {
+    res.status(200).json(
+      successResponse(0, "SUCCESS", "User unblocked successful", {
         userName: unblockedUser.userName,
         fullName: unblockedUser.fullName,
         email: unblockedUser.email,
@@ -534,14 +461,10 @@ exports.unblockedUser = async (req, res) => {
         verified: unblockedUser.verified,
         status: unblockedUser.status,
         createdAt: unblockedUser.createdAt,
-        updatedAt: unblockedUser.updatedAt
-      }
-    ));
+        updatedAt: unblockedUser.updatedAt,
+      })
+    );
   } catch (error) {
-    res.status(500).json(errorResponse(
-      2,
-      'SERVER SIDE ERROR',
-      error
-    ));
+    res.status(500).json(errorResponse(2, "SERVER SIDE ERROR", error));
   }
 };

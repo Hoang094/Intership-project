@@ -1,10 +1,8 @@
-
-
-const mongoose = require('mongoose');
-const crypto = require('crypto');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const mongoose = require("mongoose");
+const crypto = require("crypto");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const usersSchema = new mongoose.Schema({
   userName: {
@@ -12,57 +10,57 @@ const usersSchema = new mongoose.Schema({
     trim: true,
     unique: true,
     lowercase: true,
-    required: [true, 'User name filed is required']
+    required: [true, "User name filed is required"],
   },
   fullName: {
     type: String,
-    required: [true, 'Full name filed is required']
+    required: [true, "Full name filed is required"],
   },
   email: {
     type: String,
     unique: true,
-    required: [true, 'Email filed is required'],
-    validate: [validator.isEmail, 'Please enter a valid email address']
+    required: [true, "Email filed is required"],
+    validate: [validator.isEmail, "Please enter a valid email address"],
   },
   phone: {
     type: String,
     unique: true,
-    validate: [validator.isMobilePhone, 'Please enter a valid phone number']
+    validate: [validator.isMobilePhone, "Please enter a valid phone number"],
   },
   password: {
     type: String,
-    required: [true, 'Password filed is required'],
-    minlength: [6, 'Password must be at least 6 characters'],
-    select: false
+    required: [true, "Password filed is required"],
+    minlength: [6, "Password must be at least 6 characters"],
+    select: false,
   },
   avatar: {
-    type: String
+    type: String,
   },
   gender: {
     type: String,
-    enum: ['male', 'female']
+    enum: ["male", "female"],
   },
   dob: {
     type: Date,
-    required: [validator.isDate, 'Date of birth filed is required']
+    required: [validator.isDate, "Date of birth filed is required"],
   },
   address: {
     type: String,
-    required: [true, 'Address field is required']
+    required: [true, "Address field is required"],
   },
   role: {
     type: String,
-    enum: ['admin', 'user'],
-    default: 'user'
+    enum: ["admin", "user"],
+    default: "user",
   },
   verified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   status: {
     type: String,
-    enum: ['register', 'login', 'logout', 'blocked'],
-    default: 'register'
+    enum: ["register", "login", "logout", "blocked"],
+    default: "register",
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
@@ -70,25 +68,25 @@ const usersSchema = new mongoose.Schema({
   emailVerificationExpire: Date,
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Replace spaces with dashes in userName before saving
-usersSchema.pre('save', function (next) {
+usersSchema.pre("save", function (next) {
   if (this.userName) {
-    this.userName = this.userName.replace(/\s/g, '-');
+    this.userName = this.userName.replace(/\s/g, "-");
   }
   next();
 });
 
 // after save, hash password
-usersSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+usersSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -98,14 +96,14 @@ usersSchema.pre('save', async function (next) {
 // JWT Access Token
 usersSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES
+    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
   });
 };
 
 // JWT Refresh Token
 usersSchema.methods.getJWTRefreshToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_REFRESH_TOKEN_SECRET_KEY, {
-    expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES
+    expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
   });
 };
 
@@ -117,13 +115,13 @@ usersSchema.methods.comparePassword = async function (password) {
 // generating password reset token
 usersSchema.methods.getResetPasswordToken = function () {
   // generating token
-  const resetToken = crypto.randomBytes(20).toString('hex');
+  const resetToken = crypto.randomBytes(20).toString("hex");
 
   // hashing and adding resetPasswordToken to usersSchema
   this.resetPasswordToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(resetToken)
-    .digest('hex');
+    .digest("hex");
 
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   return resetToken;
@@ -132,16 +130,16 @@ usersSchema.methods.getResetPasswordToken = function () {
 // generating email verification token
 usersSchema.methods.getEmailVerificationToken = function () {
   // generating token
-  const verificationToken = crypto.randomBytes(20).toString('hex');
+  const verificationToken = crypto.randomBytes(20).toString("hex");
 
   // hashing and adding emailVerificationToken to usersSchema
   this.emailVerificationToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(verificationToken)
-    .digest('hex');
+    .digest("hex");
 
   this.emailVerificationExpire = Date.now() + 15 * 60 * 1000;
   return verificationToken;
 };
 
-module.exports = mongoose.model('Users', usersSchema);
+module.exports = mongoose.model("Users", usersSchema);
